@@ -1,0 +1,17 @@
+﻿using SocialNetworkAnalyser.Data.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace SocialNetworkAnalyser.Data.Repositories.Interfaces
+{
+    public interface IFriendshipRepository
+    {
+        Friendship Get(Guid id);
+        List<Friendship> GetAll();
+        void Add(Friendship friendship);
+
+    }
+}

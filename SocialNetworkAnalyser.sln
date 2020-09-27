@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.1259
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialNetworkAnalyser", "SocialNetworkAnalyser\SocialNetworkAnalyser.csproj", "{03939BDE-A343-4A7A-AD03-5A8C7E20199F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialNetworkAnalyser.Tests", "SocialNetworkAnalyser.Tests\SocialNetworkAnalyser.Tests.csproj", "{9083A7D1-867E-4F17-BE66-95A12D667EA6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialNetworkAnalyser.Business", "..\SocialNetworkAnalyser.Business\SocialNetworkAnalyser.Business.csproj", "{DCD6BA64-E552-46B1-89AD-0F2A2F8F76F9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SocialNetworkAnalyser.Data", "SocialNetworkAnalyser.Data\SocialNetworkAnalyser.Data.csproj", "{5E639304-9D4E-43B0-8D9E-2E0AC22E98A7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{03939BDE-A343-4A7A-AD03-5A8C7E20199F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{03939BDE-A343-4A7A-AD03-5A8C7E20199F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{03939BDE-A343-4A7A-AD03-5A8C7E20199F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{03939BDE-A343-4A7A-AD03-5A8C7E20199F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9083A7D1-867E-4F17-BE66-95A12D667EA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9083A7D1-867E-4F17-BE66-95A12D667EA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9083A7D1-867E-4F17-BE66-95A12D667EA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9083A7D1-867E-4F17-BE66-95A12D667EA6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCD6BA64-E552-46B1-89AD-0F2A2F8F76F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCD6BA64-E552-46B1-89AD-0F2A2F8F76F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCD6BA64-E552-46B1-89AD-0F2A2F8F76F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCD6BA64-E552-46B1-89AD-0F2A2F8F76F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E639304-9D4E-43B0-8D9E-2E0AC22E98A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E639304-9D4E-43B0-8D9E-2E0AC22E98A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E639304-9D4E-43B0-8D9E-2E0AC22E98A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E639304-9D4E-43B0-8D9E-2E0AC22E98A7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E6319BC4-CFAB-4129-9329-9E9CABF14964}
+	EndGlobalSection
+EndGlobal
