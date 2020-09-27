@@ -187,8 +187,8 @@
     <Content Include="Scripts\jquery-3.3.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\SocialNetworkAnalyser.Business\SocialNetworkAnalyser.Business.csproj">
-      <Project>{dcd6ba64-e552-46b1-89ad-0f2a2f8f76f9}</Project>
+    <ProjectReference Include="..\SocialNetworkAnalyser.Business\SocialNetworkAnalyser.Business.csproj">
+      <Project>{87D6E4B6-E4C3-4D5E-AEB9-562AD0071264}</Project>
       <Name>SocialNetworkAnalyser.Business</Name>
     </ProjectReference>
   </ItemGroup>
