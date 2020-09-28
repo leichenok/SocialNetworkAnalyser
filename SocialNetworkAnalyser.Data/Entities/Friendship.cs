@@ -10,14 +10,26 @@ namespace SocialNetworkAnalyser.Data.Entities
     {
         public Guid Id { get; set; }
         public Guid DataSetId { get; set; }
-        public int UserId { get; set; }
-        public User User { get; set; }
 
-        public ICollection<User> Friends { get; set; }
+        public int OwnerId { get; set; }
+
+        public ICollection<User> Users { get; set; }
 
         public Friendship()
         {
-            Friends = new List<User>();
+            Users = new List<User>();
+        }
+
+
+        public static Friendship Create(int ownerId, Guid dataSetId, ICollection<User> users = null)
+        {
+            return new Friendship()
+            {
+                Id = Guid.NewGuid(),
+                OwnerId = ownerId,
+                DataSetId = dataSetId,
+                Users = users ?? new List<User>()
+            };
         }
     }
 }

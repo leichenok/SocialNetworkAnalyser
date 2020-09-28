@@ -22,7 +22,7 @@ namespace SocialNetworkAnalyser.Data.Repositories
         {
             try
             {
-                return Context.Users.FirstOrDefault(u => u.Id == id);
+                return Context.Users.FirstOrDefault(u => u.SocialNetworkId == id);
             }
             catch (Exception ex)
             {

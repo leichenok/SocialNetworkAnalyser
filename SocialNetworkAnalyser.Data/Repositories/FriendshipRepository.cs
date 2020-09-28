@@ -4,8 +4,7 @@ using SocialNetworkAnalyser.Data.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data.Entity;
 
 namespace SocialNetworkAnalyser.Data.Repositories
 {
@@ -21,7 +20,7 @@ namespace SocialNetworkAnalyser.Data.Repositories
         {
             try
             {
-                return Context.Friendships.FirstOrDefault(f => f.Id == id);
+                return Context.Friendships.Include(u => u.Users).FirstOrDefault(f => f.Id == id);
             }
             catch (Exception ex)
             {
@@ -32,7 +31,7 @@ namespace SocialNetworkAnalyser.Data.Repositories
         {
             try
             {
-                return Context.Friendships.ToList();
+                return Context.Friendships.Include(u => u.Users).ToList();
             }
             catch (Exception ex)
             {
@@ -40,11 +39,11 @@ namespace SocialNetworkAnalyser.Data.Repositories
             }
         }
 
-        public void Add(Friendship friendship)
+        public void Add(IEnumerable<Friendship> friendships)
         {
             try
             {
-                Context.Friendships.Add(friendship);
+                Context.Friendships.AddRange(friendships);
             }
             catch (Exception ex)
             {

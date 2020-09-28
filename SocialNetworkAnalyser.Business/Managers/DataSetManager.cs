@@ -4,8 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SocialNetworkAnalyser.Business.Managers
 {
@@ -14,6 +12,7 @@ namespace SocialNetworkAnalyser.Business.Managers
         public DataSetManager()
         {
         }
+
 
         public bool ImportDataSet(Stream inputStream)
         {
@@ -41,24 +40,27 @@ namespace SocialNetworkAnalyser.Business.Managers
 
                 using (var repository = new UnitOfWorkFactory())
                 {
+                    var dataSet = DataSet.Create(DateTime.Now.ToShortDateString());
 
+                    //add all unique users to database 
+                    var users = new List<User>();
+                    foreach (var user in importedDataSet)
+                        users.Add(User.Create(user.Key, dataSet.Id));
 
-                    var dataSet = new DataSet() { Id = Guid.NewGuid(), Created = DateTime.Now, Name = DateTime.Now.ToShortDateString() };
-                    repository.DataSets.Add(dataSet);
-
-
-
-                    foreach (var item in importedDataSet)
+                    //add all friendships
+                    var friendships = new List<Friendship>();
+                    foreach (var user in users)
                     {
-                        var userFriends = new List<User>();
-                        foreach (var friendId in item.Value)
-                            userFriends.Add(new User() { Id = friendId, DataSetId = dataSet.Id });
+                        var friends = users.Where(u => importedDataSet[user.SocialNetworkId].Contains(u.SocialNetworkId)).ToList();
+                        var friendship = Friendship.Create(user.SocialNetworkId, dataSet.Id, friends);
 
-
-                        var friendship = new Friendship() { Id = Guid.NewGuid(), DataSetId = dataSet.Id, UserId = item.Key, Friends = userFriends };
-                        repository.Friendships.Add(friendship);
+                        friendships.Add(friendship);
                     }
 
+                    
+                    repository.DataSets.Add(dataSet);
+                    repository.Users.Add(users);
+                    repository.Friendships.Add(friendships);
 
                     repository.Commit();
                 }

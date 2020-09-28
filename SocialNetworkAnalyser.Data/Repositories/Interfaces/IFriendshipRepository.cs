@@ -11,7 +11,7 @@ namespace SocialNetworkAnalyser.Data.Repositories.Interfaces
     {
         Friendship Get(Guid id);
         List<Friendship> GetAll();
-        void Add(Friendship friendship);
+        void Add(IEnumerable<Friendship> friendships);
 
     }
 }

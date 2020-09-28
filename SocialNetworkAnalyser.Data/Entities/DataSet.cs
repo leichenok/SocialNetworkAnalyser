@@ -11,5 +11,15 @@ namespace SocialNetworkAnalyser.Data.Entities
         public Guid Id { get; set; }
         public string Name { get; set; }
         public DateTime Created { get; set; }
+
+        public static DataSet Create(string name)
+        {
+            return new DataSet()
+            {
+                Id = Guid.NewGuid(),
+                Created = DateTime.Now,
+                Name = name
+            };
+        }
     }
 }
