@@ -9,11 +9,11 @@ namespace SocialNetworkAnalyser.Data.Repositories.Interfaces
 {
     public interface IUserRepository
     {
-        User Get(int id);
-        List<User> GetAll();
+        User Get(int id, Guid dataSetID);
+        List<User> GetAll(Guid dataSetID);
 
         void Add(IEnumerable<User> users);
 
-        int Count();
+        int Count(Guid dataSetID);
     }
 }

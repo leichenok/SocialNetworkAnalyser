@@ -16,7 +16,7 @@ namespace SocialNetworkAnalyser.Data.Repositories
         }
 
 
-        public Friendship Get(Guid id)
+        public Friendship Get(Guid id, Guid dataSetID)
         {
             try
             {
@@ -27,7 +27,7 @@ namespace SocialNetworkAnalyser.Data.Repositories
                 throw new RepositoryException(ex);
             }
         }
-        public List<Friendship> GetAll()
+        public List<Friendship> GetAll(Guid dataSetID)
         {
             try
             {
@@ -49,6 +49,12 @@ namespace SocialNetworkAnalyser.Data.Repositories
             {
                 throw new RepositoryException(ex);
             }
+        }
+
+        public double GetAverageFriendsCountForEachUser(Guid dataSetId)
+        {
+            var average = Context.Friendships.Where(f => f.DataSetId == dataSetId).Average(f => f.Users.Count);
+            return average;
         }
     }
 }

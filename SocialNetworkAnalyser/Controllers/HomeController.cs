@@ -1,27 +1,62 @@
 ﻿using SocialNetworkAnalyser.Business.Managers;
+using SocialNetworkAnalyser.CustomControllers;
 using SocialNetworkAnalyser.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace SocialNetworkAnalyser.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         public ActionResult Index()
         {
-            return PartialView("LoadFile");
+            var dataSets = DataSetManager.GetAll();       
+            return View(dataSets);
+        }
+
+        public ActionResult LoadFile()
+        {
+            return PartialView();
         }
 
         [HttpPost]
-        public ActionResult LoadFile(HttpPostedFileBase file)
+        public ActionResult LoadFile(LoadFileModel model)
         {
-            var manager = new DataSetManager();
-            bool result = manager.ImportDataSet(file.InputStream);
+            if (ModelState.IsValid)
+            {
+                if (model.SourceFile.InputStream == null)
+                {
+                    ModelState.AddModelError("SourceFile", "error while uploading file. Please try again");
+                    return PartialView(model);
+                }
 
-            return Content(result ? "Success" : "Failed");
+                bool success = DataSetManager
+.ImportDataSet(model.SourceFile.InputStream, model.FileName);
+                if (success)
+                    return RedirectToAction("Index");
+            }
+
+            return PartialView(model);          
         }
+
+        [HttpPost]
+        public JsonResult ShowStatistics(Guid dataSetId)
+        {
+            var dataSet = DataSetManager.GetAll().FirstOrDefault(d => d.Id == dataSetId);
+            int totalUsersCount = StatisticsManager.UsersCountInDataSet(dataSetId);
+            double averageFriendsCount = StatisticsManager.AverageFriendsCountForEachUser(dataSetId);
+
+            var model = new DataSetStatisticsModel()
+            {
+                DataSetName = dataSet.Name,
+                TotalUsersCount = totalUsersCount,
+                AverageFriendCountForUser = averageFriendsCount,
+                Success = (totalUsersCount != -1 && averageFriendsCount != -1)
+            };
+
+            return Json(model);
+        }
+
     }
 }

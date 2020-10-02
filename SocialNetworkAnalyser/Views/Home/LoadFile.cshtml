@@ -1,9 +1,29 @@
 ﻿@model SocialNetworkAnalyser.Models.LoadFileModel
 
-<h2>Basic File Upload</h2>
-@using (Html.BeginForm("LoadFile", "Home", FormMethod.Post, new { enctype = "multipart/form-data" }))
+@{ 
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h4>Dataset file upload</h4>
+@using (Html.BeginForm("LoadFile", "Home", FormMethod.Post, new { @id = "formDataSetUpload", enctype = "multipart/form-data" }))
 {
-    <label for="file">Upload Image:</label>
-    <input type="file" name="file" id="file" /><br><br>
-    <input type="submit" value="Upload" />
+    <div class="container">
+        <div class="row">
+            <div class="form-group">
+                @Html.LabelFor(model => model.FileName, new { @class = "control-label" })
+                @Html.TextBoxFor(model => model.FileName, new { @id = "txtDataSetName", @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.FileName, "", new { @class = "help-block" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.SourceFile, new { @class = "control-label" })
+                @Html.TextBoxFor(model => model.SourceFile, null, new { @id = "uplDataSetFileUpload", @class = "form-control-file", type = "file" })
+                @Html.ValidationMessageFor(model => model.SourceFile, "", new { @class = "help-block" })
+            </div>
+            
+            <input class="btn btn-primary" type="submit" value="Upload" />
+        </div>
+    </div>
+    
+    
+    
 }

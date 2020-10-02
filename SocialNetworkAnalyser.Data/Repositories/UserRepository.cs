@@ -18,7 +18,7 @@ namespace SocialNetworkAnalyser.Data.Repositories
         }
 
        
-        public User Get(int id)
+        public User Get(int id, Guid dataSetID)
         {
             try
             {
@@ -29,11 +29,11 @@ namespace SocialNetworkAnalyser.Data.Repositories
                 throw new RepositoryException(ex);
             }
         }
-        public List<User> GetAll()
+        public List<User> GetAll(Guid dataSetID)
         {
             try
             {
-                return Context.Users.ToList();
+                return Context.Users.Where(u => u.DataSetId == dataSetID).ToList();
             }
             catch (Exception ex)
             {
@@ -53,11 +53,11 @@ namespace SocialNetworkAnalyser.Data.Repositories
             }
         }       
 
-        public int Count()
+        public int Count(Guid dataSetID)
         {
             try
             {
-                return Context.Users.Count();
+                return Context.Users.Count(u => u.DataSetId == dataSetID);
             }
             catch (Exception ex)
             {

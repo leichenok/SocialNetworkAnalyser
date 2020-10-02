@@ -1,4 +1,5 @@
-﻿using SocialNetworkAnalyser.Data.Entities;
+﻿using SocialNetworkAnalyser.Business.Logging;
+using SocialNetworkAnalyser.Data.Entities;
 using SocialNetworkAnalyser.Data.Repositories;
 using System;
 using System.Collections.Generic;
@@ -13,15 +14,30 @@ namespace SocialNetworkAnalyser.Business.Managers
         {
         }
 
+        public List<DataSet> GetAll()
+        {
+            try
+            {
+                using (var repository = new UnitOfWorkFactory())
+                {
+                    return repository.DataSets.GetAll();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex);
+                return new List<DataSet>();
+            }
+        }
 
-        public bool ImportDataSet(Stream inputStream)
+        public bool ImportDataSet(Stream inputStream, string dataSetName)
         {
             try
             {
                 if (inputStream == null || inputStream.Length == 0)
                     throw new ArgumentException("Empty stream");
 
-                var importedDataSet = new Dictionary<int, HashSet<int>>();
+                var importedData = new Dictionary<int, HashSet<int>>();
 
                 using (var sReader = new StreamReader(inputStream))
                 {
@@ -34,43 +50,47 @@ namespace SocialNetworkAnalyser.Business.Managers
                             return false;
 
                         if (friendsIDs[0] != friendsIDs[1])
-                            AddFriendshipToDataSet(importedDataSet, friendsIDs);
+                            AddFriendshipToDataSet(importedData, friendsIDs);
                     }
                 }
 
-                using (var repository = new UnitOfWorkFactory())
-                {
-                    var dataSet = DataSet.Create(DateTime.Now.ToShortDateString());
-
-                    //add all unique users to database 
-                    var users = new List<User>();
-                    foreach (var user in importedDataSet)
-                        users.Add(User.Create(user.Key, dataSet.Id));
-
-                    //add all friendships
-                    var friendships = new List<Friendship>();
-                    foreach (var user in users)
-                    {
-                        var friends = users.Where(u => importedDataSet[user.SocialNetworkId].Contains(u.SocialNetworkId)).ToList();
-                        var friendship = Friendship.Create(user.SocialNetworkId, dataSet.Id, friends);
-
-                        friendships.Add(friendship);
-                    }
-
-                    
-                    repository.DataSets.Add(dataSet);
-                    repository.Users.Add(users);
-                    repository.Friendships.Add(friendships);
-
-                    repository.Commit();
-                }
+                Save(importedData, dataSetName);
 
                 return true;
             }
             catch (Exception ex)
             {
-                //log error
+                Logger.LogError(ex);
                 return false;
+            }
+        }
+
+        private void Save(Dictionary<int, HashSet<int>> importedDataSet, string dataSetName)
+        {
+            using (var repository = new UnitOfWorkFactory())
+            {
+                var dataSet = DataSet.Create(dataSetName);
+
+                //create all unique users
+                var users = new List<User>();
+                foreach (var user in importedDataSet)
+                    users.Add(User.Create(user.Key, dataSet.Id));
+
+                //create friendships for each user
+                var friendships = new List<Friendship>();
+                foreach (var user in users)
+                { 
+                    var friends = users.Where(u => importedDataSet[user.SocialNetworkId].Contains(u.SocialNetworkId)).ToList();
+                    var friendship = Friendship.Create(user.SocialNetworkId, dataSet.Id, friends);
+
+                    friendships.Add(friendship);
+                }
+
+                repository.DataSets.Add(dataSet);
+                repository.Users.Add(users);
+                repository.Friendships.Add(friendships);
+
+                repository.Commit();
             }
         }
 
@@ -90,7 +110,6 @@ namespace SocialNetworkAnalyser.Business.Managers
                     importedDataSet.Add(userId, new HashSet<int>() { friendId });
             }
         }
-
         private int[] ParseFriendsIDs(string line)
         {
             try
@@ -106,7 +125,7 @@ namespace SocialNetworkAnalyser.Business.Managers
             }
             catch (Exception ex)
             {
-                //LogError like string.Format("Line '{0}' not parsed", line)
+                Logger.LogError(ex);
                 return null;
             }
         }
