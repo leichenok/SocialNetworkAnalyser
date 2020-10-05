@@ -9,9 +9,7 @@ namespace SocialNetworkAnalyser.Data.Repositories.Interfaces
 {
     public interface IFriendshipRepository
     {
-        Friendship Get(Guid id, Guid dataSetID);
-        List<Friendship> GetAll(Guid dataSetID);
         void Add(IEnumerable<Friendship> friendships);
-        double GetAverageFriendsCountForEachUser(Guid dataSetID);
+        double GetAverageFriendsCountForEachPerson(Guid dataSetID);
     }
 }

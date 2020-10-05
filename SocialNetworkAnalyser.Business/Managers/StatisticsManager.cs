@@ -8,33 +8,34 @@ using System.Threading.Tasks;
 
 namespace SocialNetworkAnalyser.Business.Managers
 {
-    public class StatisticsManager
+    public class StatisticsManager : ManagerBase
     {
-        public int UsersCountInDataSet(Guid dataSetId)
+        public int FriendsCountInDataSet(Guid dataSetId)
         {
             try
             {
-                using(var repository = new UnitOfWorkFactory())
+                using(var repository = NewRepositoryFactory())
                 {
-                    return repository.Users.Count(dataSetId);
+                    return repository.Friends.Count(dataSetId);
                 }
-            } catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 Logger.LogError(ex);
                 return -1;
             }
         }
-
-        public double AverageFriendsCountForEachUser(Guid dataSetId)
+        public double AverageFriendsCountForEachPerson(Guid dataSetId)
         {
             try
             {
-                using(var repository = new UnitOfWorkFactory())
+                using(var repository = NewRepositoryFactory())
                 {
-                    var result = repository.Friendships.GetAverageFriendsCountForEachUser(dataSetId);
+                    var result = repository.Friendships.GetAverageFriendsCountForEachPerson(dataSetId);
                     return Math.Round(result, 2);
                 }
-            } catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 Logger.LogError(ex);
                 return -1;

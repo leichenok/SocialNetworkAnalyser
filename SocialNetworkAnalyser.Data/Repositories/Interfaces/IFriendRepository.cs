@@ -7,13 +7,8 @@ using System.Threading.Tasks;
 
 namespace SocialNetworkAnalyser.Data.Repositories.Interfaces
 {
-    public interface IUserRepository
+    public interface IFriendRepository
     {
-        User Get(int id, Guid dataSetID);
-        List<User> GetAll(Guid dataSetID);
-
-        void Add(IEnumerable<User> users);
-
         int Count(Guid dataSetID);
     }
 }

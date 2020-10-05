@@ -11,7 +11,6 @@ namespace SocialNetworkAnalyser.Data.Repositories
     {
         protected AppContext Context { get; private set; }
 
-
         public RepositoryBase(AppContext context)
         {
             Context = context;

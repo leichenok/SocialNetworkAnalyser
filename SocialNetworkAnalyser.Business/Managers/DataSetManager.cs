@@ -1,4 +1,5 @@
 ﻿using SocialNetworkAnalyser.Business.Logging;
+using SocialNetworkAnalyser.Business.Models;
 using SocialNetworkAnalyser.Data.Entities;
 using SocialNetworkAnalyser.Data.Repositories;
 using System;
@@ -8,17 +9,33 @@ using System.Linq;
 
 namespace SocialNetworkAnalyser.Business.Managers
 {
-    public class DataSetManager
+    public class DataSetManager : ManagerBase
     {
         public DataSetManager()
         {
         }
 
+
+        public DataSet Get(Guid id)
+        {
+            try
+            {
+                using (var repository = NewRepositoryFactory())
+                {
+                    return repository.DataSets.Get(id);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex);
+                return null;
+            }
+        }
         public List<DataSet> GetAll()
         {
             try
             {
-                using (var repository = new UnitOfWorkFactory())
+                using (var repository = NewRepositoryFactory())
                 {
                     return repository.DataSets.GetAll();
                 }
@@ -30,93 +47,104 @@ namespace SocialNetworkAnalyser.Business.Managers
             }
         }
 
-        public bool ImportDataSet(Stream inputStream, string dataSetName)
+        public ImportDataSetResult ImportDataSet(Stream inputStream, string dataSetName)
         {
+            if (inputStream == null || inputStream.Length == 0)
+                throw new ArgumentException("Null or empty file stream");
+
             try
             {
-                if (inputStream == null || inputStream.Length == 0)
-                    throw new ArgumentException("Empty stream");
-
-                var importedData = new Dictionary<int, HashSet<int>>();
+                var parsedData = new Dictionary<int, HashSet<int>>();
 
                 using (var sReader = new StreamReader(inputStream))
                 {
+                    int lineIndex = 1;
                     while (!sReader.EndOfStream)
                     {
                         string sourceLine = sReader.ReadLine();
+                        if (string.IsNullOrEmpty(sourceLine))
+                        {
+                            lineIndex++;
+                            continue;
+                        }
+
                         var friendsIDs = ParseFriendsIDs(sourceLine);
 
                         if (friendsIDs == null)
-                            return false;
+                        {
+                            string errorMessage = $"Incorrect line {lineIndex}: '{sourceLine}'";
+                            var importResult = new ImportDataSetResult(false, errorMessage);
+
+                            return importResult;
+                        }
 
                         if (friendsIDs[0] != friendsIDs[1])
-                            AddFriendshipToDataSet(importedData, friendsIDs);
+                            AddFriendIdToFriendship(parsedData, friendsIDs);
+
+                        lineIndex++;
                     }
                 }
 
-                Save(importedData, dataSetName);
+                Save(parsedData, dataSetName);
 
-                return true;
+                return new ImportDataSetResult(true);
             }
             catch (Exception ex)
             {
                 Logger.LogError(ex);
-                return false;
+                return new ImportDataSetResult(false, ex.Message);
             }
         }
 
-        private void Save(Dictionary<int, HashSet<int>> importedDataSet, string dataSetName)
+
+        private void Save(Dictionary<int, HashSet<int>> parsedData, string dataSetName)
         {
-            using (var repository = new UnitOfWorkFactory())
+            using (var repository = NewRepositoryFactory())
             {
                 var dataSet = DataSet.Create(dataSetName);
 
-                //create all unique users
-                var users = new List<User>();
-                foreach (var user in importedDataSet)
-                    users.Add(User.Create(user.Key, dataSet.Id));
+                //create all unique friends
+                var friends = new List<Friend>();
+                foreach (var friend in parsedData)
+                    friends.Add(Friend.Create(friend.Key, dataSet.Id));
 
-                //create friendships for each user
+                //create friendships for each user(friend)
                 var friendships = new List<Friendship>();
-                foreach (var user in users)
-                { 
-                    var friends = users.Where(u => importedDataSet[user.SocialNetworkId].Contains(u.SocialNetworkId)).ToList();
-                    var friendship = Friendship.Create(user.SocialNetworkId, dataSet.Id, friends);
+                foreach (var friend in friends)
+                {
+                    var mutualFriends = friends.Where(f => parsedData[friend.SocialNetworkId].Contains(f.SocialNetworkId)).ToList();
+                    var friendship = Friendship.Create(friend.Id, dataSet.Id, mutualFriends);
 
                     friendships.Add(friendship);
                 }
 
                 repository.DataSets.Add(dataSet);
-                repository.Users.Add(users);
                 repository.Friendships.Add(friendships);
 
                 repository.Commit();
             }
         }
 
-        private void AddFriendshipToDataSet(Dictionary<int, HashSet<int>> importedDataSet, int[] friendsIDs)
+        private void AddFriendIdToFriendship(Dictionary<int, HashSet<int>> parsedData, int[] friendsIDs)
         {
-            int userId;
-            int friendId;
+            int firstFriendId;
+            int secondfriendId;
 
             for (int i = 0; i < friendsIDs.Length; i++)
             {
-                userId = friendsIDs[i];
-                friendId = (i == 0) ? friendsIDs[i + 1] : friendsIDs[i - 1];
+                firstFriendId = friendsIDs[i];
+                secondfriendId = (i == 0) ? friendsIDs[i + 1] : friendsIDs[i - 1];
 
-                if (importedDataSet.ContainsKey(userId))
-                    importedDataSet[userId].Add(friendId);
+                if (parsedData.ContainsKey(firstFriendId))
+                    parsedData[firstFriendId].Add(secondfriendId);
                 else
-                    importedDataSet.Add(userId, new HashSet<int>() { friendId });
+                    parsedData.Add(firstFriendId, new HashSet<int>() { secondfriendId });
             }
         }
         private int[] ParseFriendsIDs(string line)
         {
             try
             {
-                if (string.IsNullOrEmpty(line))
-                    return null;
-
                 var parsedIDs = line.Trim().Split(' ');
                 if (parsedIDs.Length != 2)
                     return null;

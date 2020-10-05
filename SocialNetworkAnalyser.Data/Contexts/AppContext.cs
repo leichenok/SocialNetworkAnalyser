@@ -11,7 +11,7 @@ namespace SocialNetworkAnalyser.Data.Contexts
     public class AppContext : DbContext
     {
         public DbSet<DataSet> DataSets { get; set; }
-        public DbSet<User> Users { get; set; }
+        public DbSet<Friend> Friends { get; set; }
         public DbSet<Friendship> Friendships { get; set; }
 
         public AppContext() : base("AppDbConnection")

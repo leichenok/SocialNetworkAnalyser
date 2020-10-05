@@ -25,16 +25,17 @@ namespace SocialNetworkAnalyser.Controllers
         {
             if (ModelState.IsValid)
             {
-                if (model.SourceFile.InputStream == null)
+                if (model.SourceFile.InputStream == null || model.SourceFile.InputStream.Length == 0)
                 {
-                    ModelState.AddModelError("SourceFile", "error while uploading file. Please try again");
+                    ModelState.AddModelError("SourceFile", "Error while uploading file. Please try again");
                     return PartialView(model);
                 }
 
-                bool success = DataSetManager
-.ImportDataSet(model.SourceFile.InputStream, model.FileName);
-                if (success)
+                var importResult = DataSetManager.ImportDataSet(model.SourceFile.InputStream, model.FileName);
+                if (importResult.Success)
                     return RedirectToAction("Index");
+                else
+                    ModelState.AddModelError("SourceFile", importResult.ErrorMessage);
             }
 
             return PartialView(model);          
@@ -43,9 +44,9 @@ namespace SocialNetworkAnalyser.Controllers
         [HttpPost]
         public JsonResult ShowStatistics(Guid dataSetId)
         {
-            var dataSet = DataSetManager.GetAll().FirstOrDefault(d => d.Id == dataSetId);
-            int totalUsersCount = StatisticsManager.UsersCountInDataSet(dataSetId);
-            double averageFriendsCount = StatisticsManager.AverageFriendsCountForEachUser(dataSetId);
+            var dataSet = DataSetManager.Get(dataSetId);
+            int totalUsersCount = StatisticsManager.FriendsCountInDataSet(dataSetId);
+            double averageFriendsCount = StatisticsManager.AverageFriendsCountForEachPerson(dataSetId);
 
             var model = new DataSetStatisticsModel()
             {
@@ -57,6 +58,5 @@ namespace SocialNetworkAnalyser.Controllers
 
             return Json(model);
         }
-
     }
 }

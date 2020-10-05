@@ -15,13 +15,13 @@
                 @Html.Grid(Model).Columns(column =>
            {
                column.Add(c => c.Name).Titled("Dataset name").Filterable(true);
-               column.Add(c => c.Created).Titled("Created").Filterable(true);
+               column.Add(c => c.Created).Titled("Created").Sortable(true);
                column.Add()
                .Encoded(false)
                .Sanitized(false)
                .SetWidth(30)
                .RenderValueAs(dataset => Html.ButtonJsClick("Show", string.Format("Site.showDataSetStatistics('{0}')", dataset.Id), new { @class = "btn btn-primary btn-sm" }));
-           }).WithPaging(10).Named("dataSetGrid").Selectable(false)
+           }).WithPaging(10).Named("dataSetGrid").Selectable(false).Sortable(true)
             </div>
         </div>
 

@@ -8,15 +8,15 @@ using System.Threading.Tasks;
 
 namespace SocialNetworkAnalyser.Data.Repositories
 {
-    public class UnitOfWorkFactory : IUnitOfWorkFactory, IDisposable
+    public class RepositoryFactory : IRepositoryFactory
     {
-        private AppContext _context = new AppContext();
+        private AppContext _context;
 
         private bool _disposed = false;
 
         private IDataSetRepository _dataSetRepository;
         private IFriendshipRepository _friendshipRepository;
-        private IUserRepository _userRepository;
+        private IFriendRepository _friendRepository;
 
         public IDataSetRepository DataSets
         {
@@ -38,15 +38,23 @@ namespace SocialNetworkAnalyser.Data.Repositories
                 return _friendshipRepository;
             }
         }
-        public IUserRepository Users
+        public IFriendRepository Friends
         {
             get
             {
-                if (_userRepository == null)
-                    _userRepository = new UserRepository(_context);
+                if (_friendRepository == null)
+                    _friendRepository = new FriendRepository(_context);
 
-                return _userRepository;
+                return _friendRepository;
             }
+        }
+
+        public bool Disposed => _disposed;
+
+        public RepositoryFactory()
+        {
+            _context = new AppContext();
+            _context.Configuration.AutoDetectChangesEnabled = false;
         }
 
         public void Commit()

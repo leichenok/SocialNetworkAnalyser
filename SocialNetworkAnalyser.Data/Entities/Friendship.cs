@@ -11,24 +11,24 @@ namespace SocialNetworkAnalyser.Data.Entities
         public Guid Id { get; set; }
         public Guid DataSetId { get; set; }
 
-        public int OwnerId { get; set; }
+        public Guid MutualFriendId { get; set; }
 
-        public ICollection<User> Users { get; set; }
+        public ICollection<Friend> Friends { get; set; }
 
         public Friendship()
         {
-            Users = new List<User>();
+            Friends = new List<Friend>();
         }
 
 
-        public static Friendship Create(int ownerId, Guid dataSetId, ICollection<User> users = null)
+        public static Friendship Create(Guid mutualFriendId, Guid dataSetId, ICollection<Friend> users = null)
         {
             return new Friendship()
             {
                 Id = Guid.NewGuid(),
-                OwnerId = ownerId,
+                MutualFriendId = mutualFriendId,
                 DataSetId = dataSetId,
-                Users = users ?? new List<User>()
+                Friends = users ?? new List<Friend>()
             };
         }
     }

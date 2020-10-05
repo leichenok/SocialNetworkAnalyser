@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SocialNetworkAnalyser.Data.Entities
 {
-    public class User
+    public class Friend
     {
         public Guid Id { get; set; }
         public Guid DataSetId { get; set; }
@@ -12,14 +12,14 @@ namespace SocialNetworkAnalyser.Data.Entities
 
         public ICollection<Friendship> Friendships { get; set; }
 
-        public User()
+        public Friend()
         {
             Friendships = new List<Friendship>();
         }
 
-        public static User Create(int socialNetworkId, Guid dataSetId, ICollection<Friendship> friendships = null)
+        public static Friend Create(int socialNetworkId, Guid dataSetId, ICollection<Friendship> friendships = null)
         {
-            return new User()
+            return new Friend()
             {
                 Id = Guid.NewGuid(),
                 DataSetId = dataSetId,

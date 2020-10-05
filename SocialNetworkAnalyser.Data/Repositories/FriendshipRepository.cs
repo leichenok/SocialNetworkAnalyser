@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Data.Entity;
+using System.Data.SqlClient;
 
 namespace SocialNetworkAnalyser.Data.Repositories
 {
@@ -16,34 +17,15 @@ namespace SocialNetworkAnalyser.Data.Repositories
         }
 
 
-        public Friendship Get(Guid id, Guid dataSetID)
-        {
-            try
-            {
-                return Context.Friendships.Include(u => u.Users).FirstOrDefault(f => f.Id == id);
-            }
-            catch (Exception ex)
-            {
-                throw new RepositoryException(ex);
-            }
-        }
-        public List<Friendship> GetAll(Guid dataSetID)
-        {
-            try
-            {
-                return Context.Friendships.Include(u => u.Users).ToList();
-            }
-            catch (Exception ex)
-            {
-                throw new RepositoryException(ex);
-            }
-        }
-
         public void Add(IEnumerable<Friendship> friendships)
         {
             try
             {
-                Context.Friendships.AddRange(friendships);
+                Context.BulkInsert(friendships, options => 
+                {
+                    options.IncludeGraph = true;
+                    options.AutoMapOutputDirection = false;
+                });
             }
             catch (Exception ex)
             {
@@ -51,9 +33,13 @@ namespace SocialNetworkAnalyser.Data.Repositories
             }
         }
 
-        public double GetAverageFriendsCountForEachUser(Guid dataSetId)
+        public double GetAverageFriendsCountForEachPerson(Guid dataSetId)
         {
-            var average = Context.Friendships.Where(f => f.DataSetId == dataSetId).Average(f => f.Users.Count);
+            var average = Context.Friendships.
+                AsNoTracking().
+                Where(f => f.DataSetId == dataSetId).
+                Average(f => f.Friends.Count);
+
             return average;
         }
     }

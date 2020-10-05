@@ -16,12 +16,11 @@ namespace SocialNetworkAnalyser.Data.Repositories
         {
         }
 
-
         public DataSet Get(Guid id)
         {
             try
             {
-                return Context.DataSets.FirstOrDefault(d => d.Id == id);
+                return Context.DataSets.AsNoTracking().FirstOrDefault(d => d.Id == id);
             }
             catch (Exception ex)
             {
@@ -32,7 +31,7 @@ namespace SocialNetworkAnalyser.Data.Repositories
         {
             try
             {
-                return Context.DataSets.ToList();
+                return Context.DataSets.AsNoTracking().ToList();
             }
             catch (Exception ex)
             {

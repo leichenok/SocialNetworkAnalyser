@@ -48,7 +48,9 @@
   <ItemGroup>
     <Compile Include="Logging\Logger.cs" />
     <Compile Include="Managers\DataSetManager.cs" />
+    <Compile Include="Managers\ManagerBase.cs" />
     <Compile Include="Managers\StatisticsManager.cs" />
+    <Compile Include="Models\ImportDataSetResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
